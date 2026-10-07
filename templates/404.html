@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Not Found — AlfajTools{% endblock %}
+{% block content %}
+<section class="empty-page"><div class="pill">404</div><h1>Nothing here.</h1><p>{{ message }}</p><a class="btn primary" href="{{ url_for('index') }}">Back to tools</a></section>
+{% endblock %}

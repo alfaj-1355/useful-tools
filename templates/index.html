@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Useful Tools — 50+ Free Online Tools{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-inner">
+    <div class="pill">✦ 50+ everyday tools</div>
+    <h1>Everything you need.<br><span>One simple toolbox.</span></h1>
+    <p>Fast, privacy-friendly tools for text, PDF, images, calculations, developers, SEO and daily tasks.</p>
+    <div class="search-wrap"><span>⌕</span><input id="toolSearch" placeholder="Search tools like PDF, JSON, QR, EMI..." autocomplete="off"></div>
+    <div class="hero-actions">
+      <a class="btn primary" href="#tools">Explore tools →</a>
+      <a class="btn ghost" href="#categories">Browse categories</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="categories">
+  <div class="section-head"><div><p class="eyebrow">ORGANIZE</p><h2>Browse by category</h2></div></div>
+  <div class="chips">
+    {% for c in categories %}<button class="chip {% if loop.first %}active{% endif %}" data-category="{{ c }}">{{ c }}</button>{% endfor %}
+  </div>
+</section>
+
+<section class="section" id="tools">
+  <div class="section-head"><div><p class="eyebrow">TOOLBOX</p><h2>Popular & useful tools</h2></div><span id="count" class="muted">{{ tools|length }} tools</span></div>
+  <div class="grid" id="toolGrid">
+    {% for slug,name,desc,cat in tools %}
+    <a class="tool-card" href="{{ url_for('tool', slug=slug) }}" data-name="{{ name|lower }}" data-desc="{{ desc|lower }}" data-category="{{ cat }}">
+      <div class="tool-icon">{{ {'Text':'✎','Developer':'</>','Image':'▧','PDF':'▤','Calculator':'∑','SEO':'⌁','Utility':'✦','Daily Life':'★'}.get(cat,'✦') }}</div>
+      <div class="tool-cat">{{ cat }}</div><h3>{{ name }}</h3><p>{{ desc }}</p><span class="arrow">→</span>
+    </a>
+    {% endfor %}
+  </div>
+  <div id="empty" class="empty" hidden>No tools match your search.</div>
+</section>
+
+<section class="section info-cards">
+  <div class="info"><div class="big">01</div><h3>Choose a tool</h3><p>Pick the utility you need from the searchable toolbox.</p></div>
+  <div class="info"><div class="big">02</div><h3>Enter your data</h3><p>Use the simple form designed for desktop and mobile.</p></div>
+  <div class="info"><div class="big">03</div><h3>Get your result</h3><p>Download processed files or copy generated results instantly.</p></div>
+</section>
+{% endblock %}

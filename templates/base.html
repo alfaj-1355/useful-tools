@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Useful Tools{% endblock %}</title>
+  <meta name="description" content="Useful Tools - fast online tools for text, PDF, images, calculators, developers, SEO and everyday tasks.">
+  <meta name="theme-color" content="#5b52e8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Useful Tools">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.webmanifest') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.svg') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="nav">
+  <a class="brand" href="{{ url_for('index') }}"><span>⚡</span> Useful Tools</a>
+  <nav>
+    <a href="{{ url_for('index') }}#tools">All Tools</a>
+    <a href="{{ url_for('index') }}#categories">Categories</a>
+    <button class="icon-btn" id="installBtn" title="Install Useful Tools" hidden>＋</button>
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☾</button>
+  </nav>
+</header>
+<main>{% block content %}{% endblock %}</main>
+<footer class="footer">
+  <div><strong>⚡ Useful Tools</strong><br><span>Useful tools, one clean website.</span></div>
+  <div>© 2026 Useful Tools · Built with Python Flask</div>
+</footer>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register("{{ url_for('static', filename='sw.js') }}").catch(()=>{})); }</script>
+</body>
+</html>

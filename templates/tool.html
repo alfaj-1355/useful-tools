@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}{{ tool.name }} — Useful Tools{% endblock %}
+{% block content %}
+<section class="tool-hero">
+  <div class="container">
+    <a class="back" href="{{ url_for('index') }}">← All tools</a>
+    <div class="tool-badge">{{ tool.category }}</div>
+    <h1>{{ tool.name }}</h1><p>{{ tool.description }}</p>
+  </div>
+</section>
+<section class="tool-section">
+<div class="tool-panel">
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+<form method="post" enctype="multipart/form-data" class="tool-form">
+{% set s=tool.slug %}
+{% if s=="tip-calculator" %}
+<input type="number" step="0.01" name="bill" placeholder="Bill amount" required><input type="number" step="0.01" name="tip" value="10" placeholder="Tip %"><input type="number" name="people" value="1" min="1" placeholder="People">
+{% elif s=="split-bill" %}
+<input type="number" step="0.01" name="total" placeholder="Total bill" required><input type="number" name="people" value="2" min="1" placeholder="Number of people">
+{% elif s=="date-difference" %}
+<label>Start date</label><input type="date" name="start" required><label>End date</label><input type="date" name="end" required>
+{% elif s=="days-until" %}
+<label>Target date</label><input type="date" name="date" required>
+{% elif s=="time-duration" %}
+<label>Start time</label><input type="time" name="start" required><label>End time</label><input type="time" name="end" required>
+{% elif s=="fuel-cost" %}
+<input type="number" step="0.01" name="distance" placeholder="Distance (km)" required><input type="number" step="0.01" name="mileage" placeholder="Mileage (km/l)" required><input type="number" step="0.01" name="price" placeholder="Fuel price/litre" required>
+{% elif s=="salary-breakup" %}
+<input type="number" step="0.01" name="annual" placeholder="Annual salary" required>
+{% elif s=="electricity-bill" %}
+<input type="number" step="0.01" name="units" placeholder="Units used" required><input type="number" step="0.01" name="rate" placeholder="Rate per unit" required><input type="number" step="0.01" name="fixed" value="0" placeholder="Fixed charge">
+{% elif s=="vat-calculator" %}
+<input type="number" step="0.01" name="amount" placeholder="Amount" required><input type="number" step="0.01" name="rate" placeholder="Tax %" required>
+{% elif s=="pace-calculator" %}
+<input type="number" step="0.01" name="distance" placeholder="Distance (km)" required><input type="number" step="0.01" name="minutes" placeholder="Time (minutes)" required>
+{% elif s=="password-strength" %}
+<input type="password" name="password" placeholder="Enter a password to check" required>
+{% elif s in ["text-cleaner","csv-to-json","json-to-csv"] %}
+<textarea name="text" placeholder="Paste your text/data here..." required>{{ data.text or "" }}</textarea>
+{% elif s=="word-counter" %}
+<textarea name="text" placeholder="Paste your text here..." required>{{ data.text or "" }}</textarea>
+{% elif s=="case-converter" %}
+<textarea name="text" required>{{ data.text or "" }}</textarea><select name="mode"><option value="upper">UPPERCASE</option><option value="lower">lowercase</option><option value="title">Title Case</option><option value="sentence">Sentence case</option></select>
+{% elif s in ["remove-duplicates","text-reverser","sort-lines","line-breaks","text-to-binary","binary-to-text","url-encode","url-decode","base64-encode","base64-decode","json-formatter","json-minifier","html-escape","html-unescape","hex-converter","keyword-density","average","sitemap"] %}
+<textarea name="text" {% if s=="sitemap" %}name="urls"{% endif %} placeholder="Enter text..." required>{{ data.text or "" }}</textarea>
+{% if s=="text-reverser" %}<select name="mode"><option value="characters">Characters</option><option value="words">Words</option><option value="lines">Lines</option></select>{% endif %}
+{% if s=="sort-lines" %}<label><input type="checkbox" name="numeric" value="1"> Numeric sort</label>{% endif %}
+{% if s=="average" %}<textarea name="numbers" placeholder="10, 20, 30"></textarea>{% endif %}
+{% elif s=="find-replace" %}
+<textarea name="text" placeholder="Text..." required>{{ data.text or "" }}</textarea><input name="find" placeholder="Find" required><input name="replace" placeholder="Replace with">
+{% elif s=="slug-generator" %}<input name="text" placeholder="My Awesome Page Title" required>
+{% elif s=="lorem-ipsum" %}<input type="number" name="count" value="3" min="1" max="20" placeholder="Paragraphs">
+{% elif s=="unix-time" or s=="timestamp" %}<input name="value" placeholder="Leave empty for current timestamp">
+{% elif s=="uuid-generator" %}<p class="hint">Press generate to create a secure random UUID v4.</p>
+{% elif s=="random-string" %}<input type="number" name="length" value="24" min="1" max="256" placeholder="Length">
+{% elif s.startswith("image-") %}
+<input type="file" name="file" accept="image/*" required>
+{% if s=="image-converter" %}<select name="format"><option>PNG</option><option>JPG</option><option>WEBP</option></select>
+{% elif s=="image-resizer" %}<div class="two"><input type="number" name="width" placeholder="Width" required><input type="number" name="height" placeholder="Height" required></div>
+{% elif s=="image-compressor" %}<input type="number" name="quality" value="70" min="10" max="95"><p class="hint">JPEG quality: 10–95</p>
+{% elif s=="image-rotate" %}<input type="number" name="angle" value="90" placeholder="Degrees">{% endif %}
+{% elif s=="pdf-merge" %}<input type="file" name="files" accept="application/pdf" multiple required>
+{% elif s in ["pdf-split","pdf-rotate","pdf-info","pdf-text"] %}<input type="file" name="file" accept="application/pdf" required>
+{% if s=="pdf-split" %}<input name="pages" value="1" placeholder="Pages e.g. 1,3-5">{% endif %}
+{% if s=="pdf-rotate" %}<select name="angle"><option value="90">90°</option><option value="180">180°</option><option value="270">270°</option></select>{% endif %}
+{% elif s=="percentage" %}<div class="two"><input name="a" type="number" step="any" placeholder="Original value" required><input name="b" type="number" step="any" placeholder="Second value" required></div>
+{% elif s=="gst" %}<div class="two"><input name="amount" type="number" step="any" placeholder="Amount" required><input name="rate" type="number" step="any" placeholder="GST %" required></div><select name="mode"><option value="add">Add GST</option><option value="remove">Extract GST</option></select>
+{% elif s=="emi" %}<input name="principal" type="number" step="any" placeholder="Loan amount" required><input name="rate" type="number" step="any" placeholder="Annual interest %" required><input name="months" type="number" placeholder="Months" required>
+{% elif s=="profit-loss" %}<div class="two"><input name="cost" type="number" step="any" placeholder="Cost price" required><input name="sell" type="number" step="any" placeholder="Selling price" required></div>
+{% elif s=="bmi" %}<div class="two"><input name="weight" type="number" step="any" placeholder="Weight (kg)" required><input name="height" type="number" step="any" placeholder="Height (cm)" required></div>
+{% elif s=="age" %}<input type="date" name="dob" required>
+{% elif s=="discount" %}<div class="two"><input name="price" type="number" step="any" placeholder="Original price" required><input name="discount" type="number" step="any" placeholder="Discount %" required></div>
+{% elif s in ["compound-interest","simple-interest"] %}<input name="principal" type="number" step="any" placeholder="Principal" required><input name="rate" type="number" step="any" placeholder="Annual rate %" required><input name="years" type="number" step="any" placeholder="Years" required>{% if s=="compound-interest" %}<input name="times" type="number" value="1" min="1" placeholder="Compounds per year">{% endif %}
+{% elif s=="unit-converter" %}<input name="value" type="number" step="any" placeholder="Value" required><select name="unit"><option value="m-to-ft">Meters → Feet</option><option value="ft-to-m">Feet → Meters</option><option value="km-to-mi">Kilometers → Miles</option><option value="mi-to-km">Miles → Kilometers</option><option value="kg-to-lb">Kilograms → Pounds</option><option value="lb-to-kg">Pounds → Kilograms</option><option value="mb-to-gb">MB → GB</option><option value="gb-to-mb">GB → MB</option></select>
+{% elif s=="temperature" %}<input name="value" type="number" step="any" placeholder="Temperature" required><select name="unit"><option value="c-f">Celsius → Fahrenheit</option><option value="f-c">Fahrenheit → Celsius</option><option value="c-k">Celsius → Kelvin</option><option value="k-c">Kelvin → Celsius</option></select>
+{% elif s=="meta-tags" %}<input name="title" placeholder="Page title" required><input name="description" placeholder="Meta description" required><input name="keywords" placeholder="keyword1, keyword2">
+{% elif s=="robots-txt" %}<input name="site" placeholder="https://example.com" required>
+{% elif s=="title-checker" %}<input name="title" placeholder="Your SEO title" required>
+{% elif s=="qr-generator" %}<textarea name="data" placeholder="URL, text, contact information..." required></textarea>
+{% elif s=="password-generator" %}<input type="number" name="length" value="20" min="8" max="128">
+{% elif s=="random-number" %}<div class="two"><input name="min" type="number" value="1"><input name="max" type="number" value="100"></div>
+{% elif s=="color-converter" %}<input name="color" value="#6C5CE7" placeholder="#RRGGBB" required>
+{% else %}<textarea name="text" placeholder="Enter input..." required></textarea>{% endif %}
+<button class="btn primary submit" type="submit">Run {{ tool.name }} →</button>
+</form>
+{% if data.output or data.result %}
+<div class="result"><div class="result-head"><strong>Result</strong><button type="button" class="copy" onclick="copyResult()">Copy</button></div><pre id="resultText">{{ data.output or data.result }}</pre></div>
+{% endif %}
+</div>
+<aside class="side-card"><div class="mini-icon">⚡</div><h3>Fast & simple</h3><p>Process your input directly with the Useful Tools Flask backend.</p><ul><li>No account required</li><li>Responsive interface</li><li>Downloads for generated files</li></ul></aside>
+</section>
+{% endblock %}
